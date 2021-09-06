@@ -62,6 +62,7 @@ type TemplateConfig struct {
 type TemplateSettings struct {
 	Index  map[string]interface{} `config:"index"`
 	Source map[string]interface{} `config:"_source"`
+	Size   map[string]interface{} `config:"_size"`
 }
 
 // DefaultConfig for index template

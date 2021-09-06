@@ -66,6 +66,20 @@ func TestFileLoader_Load(t *testing.T) {
 					"properties":        nil,
 				}},
 		},
+		"load minimal config with size settings": {
+			settings: TemplateSettings{Size: common.MapStr{"enabled": true}},
+			body: common.MapStr{
+				"index_patterns": []string{"mock-7.0.0-*"},
+				"order":          order,
+				"settings":       common.MapStr{"index": nil},
+				"mappings": common.MapStr{
+					"_size":             common.MapStr{"enabled": true},
+					"_meta":             common.MapStr{"beat": prefix, "version": ver},
+					"date_detection":    false,
+					"dynamic_templates": nil,
+					"properties":        nil,
+				}},
+		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			fc, err := newFileClient(ver)

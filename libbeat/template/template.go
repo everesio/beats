@@ -200,11 +200,12 @@ func (t *Template) LoadMinimal() (common.MapStr, error) {
 		return nil, fmt.Errorf("unknown template type %v", t.templateType)
 	}
 
-	if t.config.Settings.Source != nil {
+	if t.config.Settings.Source != nil || t.config.Settings.Size != nil {
 		m["mappings"] = buildMappings(
 			t.beatVersion, t.esVersion, t.beatName,
 			nil, nil,
-			common.MapStr(t.config.Settings.Source))
+			common.MapStr(t.config.Settings.Source),
+			common.MapStr(t.config.Settings.Size))
 	}
 
 	return m, nil
@@ -270,7 +271,8 @@ func (t *Template) generateLegacy(properties common.MapStr, dynamicTemplates []c
 			t.beatVersion, t.esVersion, t.beatName,
 			properties,
 			append(dynamicTemplates, buildDynTmpl(t.esVersion)),
-			common.MapStr(t.config.Settings.Source)),
+			common.MapStr(t.config.Settings.Source),
+			common.MapStr(t.config.Settings.Size)),
 		"settings": common.MapStr{
 			"index": buildIdxSettings(
 				t.esVersion,
@@ -287,7 +289,8 @@ func (t *Template) generateComponent(properties common.MapStr, dynamicTemplates 
 				t.beatVersion, t.esVersion, t.beatName,
 				properties,
 				append(dynamicTemplates, buildDynTmpl(t.esVersion)),
-				common.MapStr(t.config.Settings.Source)),
+				common.MapStr(t.config.Settings.Source),
+				common.MapStr(t.config.Settings.Size)),
 			"settings": common.MapStr{
 				"index": buildIdxSettings(
 					t.esVersion,
@@ -319,6 +322,7 @@ func buildMappings(
 	properties common.MapStr,
 	dynTmpls []common.MapStr,
 	source common.MapStr,
+	size common.MapStr,
 ) common.MapStr {
 	mapping := common.MapStr{
 		"_meta": common.MapStr{
@@ -332,6 +336,9 @@ func buildMappings(
 
 	if len(source) > 0 {
 		mapping["_source"] = source
+	}
+	if len(size) > 0 {
+		mapping["_size"] = size
 	}
 
 	major := esVersion.Major
